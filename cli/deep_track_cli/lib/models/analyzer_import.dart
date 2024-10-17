@@ -5,8 +5,8 @@ import './file_analyzer.dart';
 class AnalyzerImport {
   final List<FileSystemEntity> files;
   final Map<String, FileAnalyzer> fileAnalyzers = {};
-  final Pattern importPattern;
-  final Pattern exportPattern;
+  final RegExp importRegex;
+  final RegExp exportRegex;
 
   List<FileAnalyzer> get fileAnalyzersList => fileAnalyzers.values.toList();
 
@@ -14,8 +14,12 @@ class AnalyzerImport {
     this.files, {
     Pattern? importFilterPattern,
     Pattern? exportFilterPattern,
-  })  : importPattern = importFilterPattern ?? importRegex,
-        exportPattern = exportFilterPattern ?? exportsRegex;
+  })  : importRegex = importFilterPattern is RegExp
+            ? importFilterPattern
+            : RegExp(importFilterPattern?.toString() ?? r"import\s+'([^']+)';"),
+        exportRegex = exportFilterPattern is RegExp
+            ? exportFilterPattern
+            : RegExp(exportFilterPattern?.toString() ?? r"export\s+'([^']+)';");
 
   List<FileAnalyzer> mergeFileAnalyzers(Map<String, FileAnalyzer> other) {
     final Map<String, FileAnalyzer> merged = {...fileAnalyzers, ...other};
@@ -76,13 +80,15 @@ class AnalyzerImport {
 
     // Regex to match Dart import statements
     final matches = importRegex.allMatches(content);
-    final exportsMatches = exportsRegex.allMatches(content);
+    final exportsMatches = exportRegex.allMatches(content);
 
     final allMatches = [...matches, ...exportsMatches];
 
     for (var match in allMatches) {
-      final import = match.group(1)!;
-      imports.add(import);
+      final import = match.group(1);
+      if (import != null) {
+        imports.add(import);
+      }
     }
 
     return imports;
