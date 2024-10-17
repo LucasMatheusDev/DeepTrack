@@ -1,6 +1,5 @@
 import 'dart:developer';
 
-import 'package:deep_track_cli/models/file_analyzer.dart';
 import 'package:deep_track_gui/features/map_mind/domain/entities/file_map_analyzer.dart';
 import 'package:deep_track_gui/features/map_mind/domain/entities/search_files_filter.dart';
 import 'package:deep_track_gui/features/map_mind/presenter/controllers/map_mind_controller.dart';
@@ -125,31 +124,32 @@ class _MapaMindPageState extends State<MapaMindPage> {
                       children: [
                         SafeArea(
                           child: InteractiveViewer(
-                              boundaryMargin: const EdgeInsets.all(100),
-                              minScale: 0.1,
-                              maxScale: 2.5,
-                              constrained: false,
-                              child: ValueListenableBuilder(
-                                valueListenable: searchControllerEditing,
-                                builder: (context, search, _) {
-                                  final text = RegExp(
-                                      searchControllerEditing.text.trim());
-                                  log('regex: $text');
+                            boundaryMargin: const EdgeInsets.all(100),
+                            minScale: 0.1,
+                            maxScale: 2.5,
+                            constrained: false,
+                            child: ValueListenableBuilder(
+                              valueListenable: searchControllerEditing,
+                              builder: (context, search, _) {
+                                final text =
+                                    RegExp(searchControllerEditing.text.trim());
+                                log('regex: $text');
 
-                                  final filerFiles = (widget.filterFiles ??
-                                          analyzerInfo.fileAnalyzer)
-                                      .where((element) =>
-                                          text.hasMatch(element.path))
-                                      .toList();
-                                  return MindMap(
-                                      children: filerFiles
-                                          .map((e) => NodeMapFileWidget(
-                                              fileTarget: e,
-                                              allFiles: widget.allFiles ??
-                                                  filerFiles))
-                                          .toList());
-                                },
-                              )),
+                                final filerFiles = (widget.filterFiles ??
+                                        analyzerInfo.fileAnalyzer)
+                                    .where((element) =>
+                                        text.hasMatch(element.path))
+                                    .toList();
+                                return MindMap(
+                                    children: filerFiles
+                                        .map((e) => NodeMapFileWidget(
+                                            fileTarget: e,
+                                            allFiles:
+                                                widget.allFiles ?? filerFiles))
+                                        .toList());
+                              },
+                            ),
+                          ),
                         ),
                         ValueListenableBuilder(
                             valueListenable: controller.state,
@@ -205,12 +205,4 @@ class _MapaMindPageState extends State<MapaMindPage> {
           }),
     );
   }
-}
-
-class NotFoundFileAnalyzer extends FileAnalyzer {
-  NotFoundFileAnalyzer({
-    required String nameFile,
-    required String path,
-    List<String>? references,
-  }) : super(nameFile: nameFile, path: path, references: references);
 }
