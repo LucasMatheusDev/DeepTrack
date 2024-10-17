@@ -1,7 +1,7 @@
 import 'package:answer/answer.dart';
 
 abstract class PageState<S extends Object?> {
-  bool isSuccess() => this is SuccessState;
+  bool get isSuccess => this is SuccessState;
 
   bool get isLoading => this is LoadingState;
 

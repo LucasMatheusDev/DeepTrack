@@ -1,4 +1,3 @@
-
 import 'package:answer/answer.dart';
 import 'package:deep_track_gui/core/page_state.dart';
 import 'package:flutter/material.dart';
@@ -22,7 +21,7 @@ class ValueNotifierState<T> extends ValueNotifier<PageState<T>> {
 
   bool get isError => value.isError;
 
-  bool get isSuccess => value.isSuccess();
+  bool get isSuccess => value.isSuccess;
 
   T get asSuccess => value.asSuccess;
 
