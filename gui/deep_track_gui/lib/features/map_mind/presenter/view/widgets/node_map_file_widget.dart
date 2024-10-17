@@ -82,7 +82,6 @@ class _NodeMapFileWidgetState extends State<NodeMapFileWidget> {
                 Navigator.of(context).push(MaterialPageRoute(
                   builder: (context) => MapaMindPage(
                     title: "References by ${widget.fileTarget.nameFile}",
-                    // Regex onde o nome do arquivo cont'em alguma das referências
                     pattern: byReferences(),
                     filterFiles: widget.allFiles.where((element) {
                       return byReferences().hasMatch(element.path);

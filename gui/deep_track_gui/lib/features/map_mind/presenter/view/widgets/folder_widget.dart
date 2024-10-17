@@ -90,9 +90,6 @@ class _FolderWidgetState extends State<FolderWidget> {
                         "References: ${widget.fileTarget.references.length}",
                         style: const TextStyle(fontSize: 12),
                       ),
-                      // botao para navegar para a tela de Mapa mindo com o titulo
-                      // referente ao arquivo selecionado
-                      // e o pattern para buscar os arquivos
                       Visibility(
                         visible: widget.showReferencesButton,
                         child: IconButton(
