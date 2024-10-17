@@ -28,8 +28,8 @@ class AnalyzerImportsCommand {
   }) async {
     final analyzerImport = AnalyzerImport(
       files,
-      importPattern: importPattern,
-      exportPattern: exportPattern,
+      importFilterPattern: importPattern,
+      exportFilterPattern: exportPattern,
     );
     await analyzerImport.analyze();
 
