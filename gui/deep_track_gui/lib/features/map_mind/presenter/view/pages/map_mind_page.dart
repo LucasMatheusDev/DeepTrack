@@ -5,6 +5,7 @@ import 'package:deep_track_gui/features/map_mind/domain/entities/file_map_analyz
 import 'package:deep_track_gui/features/map_mind/domain/entities/search_files_filter.dart';
 import 'package:deep_track_gui/features/map_mind/presenter/controllers/map_mind_controller.dart';
 import 'package:deep_track_gui/features/map_mind/presenter/view/widgets/node_map_file_widget.dart';
+import 'package:deep_track_gui/features/map_mind/presenter/view/widgets/searching_filter_form.dart';
 import 'package:flutter/material.dart';
 import 'package:mind_map/mind_map.dart';
 
@@ -195,20 +196,10 @@ class _MapaMindPageState extends State<MapaMindPage> {
                 child: Text(state.asError.message),
               );
             } else {
-              //  widget oara o usuario colocar os filtros
-              return Center(
-                child: ElevatedButton(
-                  onPressed: () {
-                    controller.getFilesAnalysis(SearchFilesFilter(
-                        basePath:
-                            r"C:\Users\lucas\StudioProjects\Projetos_Flutter\battle_flow\lib",
-                        patternsFiles: [
-                          // todos aquivos que contem .dart
-                          "",
-                        ]));
-                  },
-                  child: const Text('Analisar'),
-                ),
+              return SearchFilesFilterForm(
+                onSubmit: (filter) {
+                  controller.getFilesAnalysis(filter);
+                },
               );
             }
           }),
