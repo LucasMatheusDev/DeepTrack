@@ -5,10 +5,17 @@ import './file_analyzer.dart';
 class AnalyzerImport {
   final List<FileSystemEntity> files;
   final Map<String, FileAnalyzer> fileAnalyzers = {};
+  final Pattern importPattern;
+  final Pattern exportPattern;
 
   List<FileAnalyzer> get fileAnalyzersList => fileAnalyzers.values.toList();
 
-  AnalyzerImport(this.files);
+  AnalyzerImport(
+    this.files, {
+    Pattern? importFilterPattern,
+    Pattern? exportFilterPattern,
+  })  : importPattern = importFilterPattern ?? importRegex,
+        exportPattern = exportFilterPattern ?? exportsRegex;
 
   List<FileAnalyzer> mergeFileAnalyzers(Map<String, FileAnalyzer> other) {
     final Map<String, FileAnalyzer> merged = {...fileAnalyzers, ...other};
@@ -68,8 +75,6 @@ class AnalyzerImport {
     final List<String> imports = [];
 
     // Regex to match Dart import statements
-    final importRegex = RegExp(r"import\s+'([^']+)';");
-    final exportsRegex = RegExp(r"export\s+'([^']+)';");
     final matches = importRegex.allMatches(content);
     final exportsMatches = exportsRegex.allMatches(content);
 

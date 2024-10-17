@@ -21,8 +21,16 @@ class AnalyzerImportsCommand {
     this.saveOutput = true,
   });
 
-  Future<ResultAnalyzer> analyze(List<FileSystemEntity> files) async {
-    final analyzerImport = AnalyzerImport(files);
+  Future<ResultAnalyzer> analyze(
+    List<FileSystemEntity> files, {
+    Pattern? importPattern,
+    Pattern? exportPattern,
+  }) async {
+    final analyzerImport = AnalyzerImport(
+      files,
+      importPattern: importPattern,
+      exportPattern: exportPattern,
+    );
     await analyzerImport.analyze();
 
     if (saveOutput) {
