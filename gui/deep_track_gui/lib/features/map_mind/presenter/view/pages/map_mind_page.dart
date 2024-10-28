@@ -42,7 +42,7 @@ class _MapaMindPageState extends State<MapaMindPage> {
   @override
   void initState() {
     if (widget.allFiles?.isNotEmpty == true) {
-      // filesAnalyzed.value = [...?widget.allFiles];
+      controller.initialValue(widget.allFiles!);
     }
     super.initState();
   }
@@ -58,7 +58,9 @@ class _MapaMindPageState extends State<MapaMindPage> {
             valueListenable: controller.state,
             builder: (context, state, child) {
               if (state.isSuccess) {
-                final files = state.asSuccess.fileAnalyzer;
+                final files = state.asSuccess.byFilter(
+                    filter: (value) => RegExp(searchControllerEditing.text)
+                        .hasMatch(value.path));
 
                 return Visibility(
                   visible: files.isNotEmpty,
