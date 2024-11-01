@@ -19,6 +19,21 @@ class _SearchFilesFilterFormState extends State<SearchFilesFilterForm> {
   final TextEditingController _importPatternController =
       TextEditingController();
 
+  final infoAboutBasePath =
+      'The base path is the directory where the search will start. '
+      'In Flutter projects, it is usually the "lib" directory';
+
+  final infoAboutPatternsFiles =
+      'The pattern files are filters that will be used to search file names. '
+      'You can use regular expressions to filter the files. '
+      'Examples: *.dart, .jar, /domain/**, /data/**.';
+
+  final infoAboutImportPattern =
+      'The import pattern is a regular expression that will be used to '
+      'identify file imports. In Flutter projects, a regex like import '
+      'package:.* can be used to filter imports.';
+
+      
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -52,10 +67,20 @@ class _SearchFilesFilterFormState extends State<SearchFilesFilterForm> {
                 // Campo para basePath
                 TextFormField(
                   controller: _basePathController,
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     labelText: 'Base Path',
                     hintText: 'Enter the base path for analysis',
-                    border: OutlineInputBorder(),
+                    border: const OutlineInputBorder(),
+                    helperText: 'The path where the search will start',
+                    suffixIcon: IconButton(
+                      icon: const Icon(Icons.info),
+                      onPressed: () {
+                        showFilterInfoDialog(
+                          context,
+                          infoAboutBasePath,
+                        );
+                      },
+                    ),
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -69,10 +94,20 @@ class _SearchFilesFilterFormState extends State<SearchFilesFilterForm> {
                 // Campo para patternsFiles
                 TextFormField(
                   controller: _patternsFilesController,
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     labelText: 'Patterns Files (comma-separated)',
                     hintText: 'Example: .dart,.js,.css',
-                    border: OutlineInputBorder(),
+                    border: const OutlineInputBorder(),
+                    helperText: 'Filters to search for files',
+                    suffixIcon: IconButton(
+                      icon: const Icon(Icons.info),
+                      onPressed: () {
+                        showFilterInfoDialog(
+                          context,
+                          infoAboutPatternsFiles,
+                        );
+                      },
+                    ),
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -80,9 +115,19 @@ class _SearchFilesFilterFormState extends State<SearchFilesFilterForm> {
                 // Campo para imporPattern (opcional)
                 TextFormField(
                   controller: _importPatternController,
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     labelText: 'Import Pattern (optional)',
-                    border: OutlineInputBorder(),
+                    border: const OutlineInputBorder(),
+                    helperText: 'Regular expression to identify file imports',
+                    suffixIcon: IconButton(
+                      icon: const Icon(Icons.info),
+                      onPressed: () {
+                        showFilterInfoDialog(
+                          context,
+                          infoAboutImportPattern,
+                        );
+                      },
+                    ),
                   ),
                 ),
                 const SizedBox(height: 30),
@@ -123,4 +168,25 @@ class _SearchFilesFilterFormState extends State<SearchFilesFilterForm> {
       ),
     );
   }
+}
+
+// simple dialog for show info about filters
+Future<void> showFilterInfoDialog(BuildContext context, String info) async {
+  return showDialog(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        title: const Text('Filter Info'),
+        content: Text(info),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text('OK'),
+          ),
+        ],
+      );
+    },
+  );
 }
