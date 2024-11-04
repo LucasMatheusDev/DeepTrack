@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:deep_track_gui/features/map_mind/domain/entities/file_map_analyzer.dart';
 import 'package:deep_track_gui/features/map_mind/presenter/view/pages/map_mind_page.dart';
+import 'package:deep_track_gui/features/map_mind/presenter/view/widgets/button_take_screenshot_widget.dart';
 import 'package:deep_track_gui/features/map_mind/presenter/view/widgets/folder_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:mind_map/mind_map.dart';
@@ -22,6 +23,8 @@ class NodeMapFileWidget extends StatefulWidget {
 }
 
 class _NodeMapFileWidgetState extends State<NodeMapFileWidget> {
+  final globalKey = GlobalKey();
+
   List<FileMapMindAnalyzer> getChildren() {
     List<FileMapMindAnalyzer> children = [];
     log("Total imports: ${widget.fileTarget.imports.length}");
@@ -71,46 +74,60 @@ class _NodeMapFileWidgetState extends State<NodeMapFileWidget> {
     final children = getChildren();
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          FolderWidget(
-              isExpanded: _isExpanded.value,
-              fileTarget: widget.fileTarget,
-              showReferencesButton: hasActiveReferences(),
-              onTapReferences: (_) {
-                Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => MapaMindPage(
-                    title: "References by ${widget.fileTarget.nameFile}",
-                    pattern: byReferences(),
-                    filterFiles: widget.allFiles.where((element) {
-                      return byReferences().hasMatch(element.path);
-                    }).toList(),
-                    allFiles: widget.allFiles,
+      child: RepaintBoundary(
+        key: globalKey,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Column(
+              children: [
+                ValueListenableBuilder(
+                  valueListenable: _isExpanded,
+                  builder: (context, isExpanded, _) => ButtonTakeScreenShot(
+                    isVisible: isExpanded,
+                    repaintBoundaryKey: globalKey,
                   ),
-                ));
-              },
-              onTapExpand: (value) {
-                _isExpanded.value = value;
-              }),
-          ValueListenableBuilder(
-            valueListenable: _isExpanded,
-            builder: (context, isExpanded, child) => isExpanded
-                ? MindMap(
-                    dotColor: Colors.red,
-                    dotPath: pathNode(
-                      const Size(50, 50),
-                    ),
-                    children: children
-                        .map((file) => NodeMapFileWidget(
-                              fileTarget: file,
-                              allFiles: widget.allFiles,
-                            ))
-                        .toList(),
-                  )
-                : const SizedBox(),
-          ),
-        ],
+                ),
+                FolderWidget(
+                    isExpanded: _isExpanded.value,
+                    fileTarget: widget.fileTarget,
+                    showReferencesButton: hasActiveReferences(),
+                    onTapReferences: (_) {
+                      Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => MapaMindPage(
+                          title: "References by ${widget.fileTarget.nameFile}",
+                          pattern: byReferences(),
+                          filterFiles: widget.allFiles.where((element) {
+                            return byReferences().hasMatch(element.path);
+                          }).toList(),
+                          allFiles: widget.allFiles,
+                        ),
+                      ));
+                    },
+                    onTapExpand: (value) {
+                      _isExpanded.value = value;
+                    }),
+              ],
+            ),
+            ValueListenableBuilder(
+              valueListenable: _isExpanded,
+              builder: (context, isExpanded, child) => isExpanded
+                  ? MindMap(
+                      dotColor: Colors.red,
+                      dotPath: pathNode(
+                        const Size(50, 50),
+                      ),
+                      children: children
+                          .map((file) => NodeMapFileWidget(
+                                fileTarget: file,
+                                allFiles: widget.allFiles,
+                              ))
+                          .toList(),
+                    )
+                  : const SizedBox(),
+            ),
+          ],
+        ),
       ),
     );
   }
