@@ -19,4 +19,8 @@ class FilesAnalyzerInfo {
     }
     return fileAnalyzer.where(_ruleFilter).toList();
   }
+
+  List<FileMapMindAnalyzer> withoutReferences() {
+    return byFilter(filter: (file) => file.references.isEmpty);
+  }
 }
