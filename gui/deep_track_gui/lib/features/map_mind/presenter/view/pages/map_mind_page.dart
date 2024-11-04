@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:deep_track_gui/features/map_mind/domain/entities/file_map_analyzer.dart';
+import 'package:deep_track_gui/features/map_mind/domain/entities/map_mind_entity.dart';
 import 'package:deep_track_gui/features/map_mind/domain/entities/search_files_filter.dart';
 import 'package:deep_track_gui/features/map_mind/presenter/controllers/map_mind_controller.dart';
 import 'package:deep_track_gui/features/map_mind/presenter/view/widgets/node_map_file_widget.dart';
@@ -25,7 +26,8 @@ class MapaMindPage extends StatefulWidget {
   State<MapaMindPage> createState() => _MapaMindPageState();
 }
 
-class _MapaMindPageState extends State<MapaMindPage> {
+class _MapaMindPageState extends State<MapaMindPage>
+    with TickerProviderStateMixin {
   final MapMindProjectController controller = MapMindProjectController();
 
   final scrollController = ScrollController();
@@ -39,6 +41,11 @@ class _MapaMindPageState extends State<MapaMindPage> {
   final TransformationController transformationController =
       TransformationController();
 
+  late final TabController tabController =
+      TabController(length: 2, vsync: this);
+
+  final indexPage = ValueNotifier<int>(0);
+
   @override
   void initState() {
     if (widget.allFiles?.isNotEmpty == true) {
@@ -47,10 +54,36 @@ class _MapaMindPageState extends State<MapaMindPage> {
     super.initState();
   }
 
+  List<FileMapMindAnalyzer> filesFiltered(FilesAnalyzerInfo analyzerInfo) {
+    final text = RegExp(searchControllerEditing.text.trim());
+    log('regex: $text');
+
+    final filerFiles = (widget.filterFiles ?? analyzerInfo.fileAnalyzer)
+        .where((element) => text.hasMatch(element.path))
+        .toList();
+    return filerFiles;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        bottom: TabBar(
+          onTap: (index) {
+            indexPage.value = index;
+          },
+          controller: tabController,
+          tabs: const [
+            Tab(
+              icon: Icon(Icons.folder),
+              text: 'Files',
+            ),
+            Tab(
+              icon: Icon(Icons.delete_forever),
+              text: 'Analyzer Delete files',
+            ),
+          ],
+        ),
         title: Text(widget.title),
         toolbarHeight: 80,
         actions: [
@@ -90,6 +123,9 @@ class _MapaMindPageState extends State<MapaMindPage> {
           builder: (context, state, child) {
             if (state.isSuccess) {
               final analyzerInfo = state.asSuccess;
+              final text = RegExp(searchControllerEditing.text.trim());
+              log('regex: $text');
+
               return Row(
                 children: [
                   ValueListenableBuilder(
@@ -121,71 +157,90 @@ class _MapaMindPageState extends State<MapaMindPage> {
                         );
                       }),
                   const SizedBox(width: 10),
-                  Expanded(
-                    child: Stack(
-                      children: [
-                        SafeArea(
-                          child: InteractiveViewer(
-                            boundaryMargin: const EdgeInsets.all(100),
-                            minScale: 0.1,
-                            maxScale: 2.5,
-                            constrained: false,
-                            child: ValueListenableBuilder(
-                              valueListenable: searchControllerEditing,
-                              builder: (context, search, _) {
-                                final text =
-                                    RegExp(searchControllerEditing.text.trim());
-                                log('regex: $text');
-
-                                final filerFiles = (widget.filterFiles ??
-                                        analyzerInfo.fileAnalyzer)
-                                    .where((element) =>
-                                        text.hasMatch(element.path))
-                                    .toList();
-                                return MindMap(
-                                    children: filerFiles
-                                        .map((e) => NodeMapFileWidget(
-                                            fileTarget: e,
-                                            allFiles:
-                                                widget.allFiles ?? filerFiles))
-                                        .toList());
-                              },
-                            ),
-                          ),
-                        ),
-                        ValueListenableBuilder(
-                            valueListenable: controller.state,
-                            builder: (context, isLoading, child) {
-                              if (state.isLoading) {
-                                return Container(
-                                  color: Colors.black.withOpacity(0.5),
-                                  child: const Center(
-                                    child: CircularProgressIndicator(),
-                                  ),
-                                );
-                              }
-                              return const SizedBox();
-                            }),
-                        Align(
-                          alignment: Alignment.bottomRight,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
+                  ValueListenableBuilder(
+                    valueListenable: indexPage,
+                    builder: (context, index, child) {
+                      if (index == 0) {
+                        return Expanded(
+                          child: Stack(
                             children: [
-                              IconButton(
-                                icon: const Icon(Icons.zoom_in),
-                                onPressed: () {},
+                              SafeArea(
+                                child: InteractiveViewer(
+                                  boundaryMargin: const EdgeInsets.all(100),
+                                  minScale: 0.1,
+                                  maxScale: 2.5,
+                                  constrained: false,
+                                  child: ValueListenableBuilder(
+                                    valueListenable: searchControllerEditing,
+                                    builder: (context, search, _) {
+                                      final filerFiles =
+                                          filesFiltered(analyzerInfo);
+                                      return MindMap(
+                                          children: filerFiles
+                                              .map((e) => NodeMapFileWidget(
+                                                  fileTarget: e,
+                                                  allFiles: widget.allFiles ??
+                                                      filerFiles))
+                                              .toList());
+                                    },
+                                  ),
+                                ),
                               ),
-                              IconButton(
-                                icon: const Icon(Icons.zoom_out),
-                                onPressed: () {
-                                  transformationController.toScene(Offset.zero);
-                                },
+                              ValueListenableBuilder(
+                                  valueListenable: controller.state,
+                                  builder: (context, isLoading, child) {
+                                    if (state.isLoading) {
+                                      return Container(
+                                        color: Colors.black.withOpacity(0.5),
+                                        child: const Center(
+                                          child: CircularProgressIndicator(),
+                                        ),
+                                      );
+                                    }
+                                    return const SizedBox();
+                                  }),
+                              Align(
+                                alignment: Alignment.bottomRight,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    IconButton(
+                                      icon: const Icon(Icons.zoom_in),
+                                      onPressed: () {},
+                                    ),
+                                    IconButton(
+                                      icon: const Icon(Icons.zoom_out),
+                                      onPressed: () {
+                                        transformationController
+                                            .toScene(Offset.zero);
+                                      },
+                                    ),
+                                  ],
+                                ),
                               ),
                             ],
                           ),
-                        ),
-                      ],
-                    ),
+                        );
+                      } else {
+                        final filerFiles = filesFiltered(analyzerInfo);
+                        final withoutReferences = filerFiles
+                            .where((element) => element.references.isEmpty)
+                            .toList();
+                        return Expanded(
+                          child: ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: withoutReferences.length,
+                            itemBuilder: (context, index) {
+                              final file = withoutReferences[index];
+                              return ListTile(
+                                title: Text(file.path),
+                                subtitle: Text(file.references.join('\n')),
+                              );
+                            },
+                          ),
+                        );
+                      }
+                    },
                   ),
                 ],
               );
