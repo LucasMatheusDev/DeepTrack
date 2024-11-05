@@ -28,7 +28,7 @@ class MapMindBasePage extends StatefulWidget {
 class _MapMindBasePageState extends State<MapMindBasePage>
     with TickerProviderStateMixin {
   final MapMindProjectController controller = MapMindProjectController();
-
+  final GlobalKey repaintBoundaryKey = GlobalKey();
   final scrollController = ScrollController();
 
   final selectedIndex = ValueNotifier<int>(0);
