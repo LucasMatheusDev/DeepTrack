@@ -42,19 +42,23 @@ class AnalyzerImport {
   Future<void> analyze() async {
     fileAnalyzers.clear();
     for (var file in files) {
-      final filePath = file.path;
-      final fileName = file.uri.pathSegments.last;
-      final fileImports = await getImportsFromFile(filePath);
+      try {
+        final filePath = file.path;
+        final fileName = file.uri.pathSegments.last;
+        final fileImports = await getImportsFromFile(filePath);
 
-      // Cria um novo FileAnalyzer ou atualiza o existente
-      final analyzer = fileAnalyzers.putIfAbsent(
-        fileName,
-        () => FileAnalyzer(nameFile: fileName, path: filePath),
-      );
+        // Cria um novo FileAnalyzer ou atualiza o existente
+        final analyzer = fileAnalyzers.putIfAbsent(
+          fileName,
+          () => FileAnalyzer(nameFile: fileName, path: filePath),
+        );
 
-      analyzer.imports.addAll(fileImports);
+        analyzer.imports.addAll(fileImports);
 
-      updateFileAnalyzers(file, fileImports);
+        updateFileAnalyzers(file, fileImports);
+      } catch (e) {
+        print('Error analyzing file: ${file.path}');
+      }
     }
   }
 
