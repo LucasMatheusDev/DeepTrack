@@ -42,7 +42,7 @@ class _ButtonTakeScreenShotState extends State<ButtonTakeScreenShot> {
       return takeScreenshot();
     }
 
-    var image = await boundary.toImage(pixelRatio: 1.0);
+    var image = await boundary.toImage(pixelRatio: 3.0);
     var byteData = await image.toByteData(format: ImageByteFormat.png);
 
     if (byteData != null) {
