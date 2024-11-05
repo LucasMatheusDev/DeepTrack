@@ -54,14 +54,32 @@ class _MapMindBasePageState extends State<MapMindBasePage>
     super.initState();
   }
 
-  List<FileMapMindAnalyzer> filesFiltered(FilesAnalyzerInfo analyzerInfo) {
-    final text = RegExp(searchControllerEditing.text.trim());
-    log('regex: $text');
+  RegExp? get searchRegex {
+    try {
+      return RegExp(searchControllerEditing.text.trim());
+    } catch (e) {
+      log('error: $e');
+      return null;
+    }
+  }
 
-    final filerFiles = (widget.filterFiles ?? analyzerInfo.fileAnalyzer)
-        .where((element) => text.hasMatch(element.path))
-        .toList();
-    return filerFiles;
+  List<FileMapMindAnalyzer> filesFiltered(FilesAnalyzerInfo analyzerInfo) {
+    try {
+      log('regex: $searchRegex');
+      final String pattern = searchControllerEditing.text.trim();
+
+      final filerFiles = (widget.filterFiles ?? analyzerInfo.fileAnalyzer)
+          .where(
+            (element) =>
+                searchRegex?.hasMatch(element.path) == true ||
+                (element.path.contains(pattern)),
+          )
+          .toList();
+      return filerFiles;
+    } catch (e) {
+      log('error: $e');
+      return [];
+    }
   }
 
   @override
@@ -96,22 +114,15 @@ class _MapMindBasePageState extends State<MapMindBasePage>
             valueListenable: controller.state,
             builder: (context, state, child) {
               if (state.isSuccess) {
-                final files = state.asSuccess.byFilter(
-                    filter: (value) => RegExp(searchControllerEditing.text)
-                        .hasMatch(value.path));
-
-                return Visibility(
-                  visible: files.isNotEmpty,
-                  child: SearchBar(
-                    controller: searchControllerEditing,
-                    leading: const Icon(Icons.search),
-                    constraints:
-                        const BoxConstraints(maxWidth: 350, maxHeight: 80),
-                    onChanged: (value) {
-                      // final files = controller.searchFiles(value);
-                      // filesAnalyzed.value = files;
-                    },
-                  ),
+                return SearchBar(
+                  controller: searchControllerEditing,
+                  leading: const Icon(Icons.search),
+                  constraints:
+                      const BoxConstraints(maxWidth: 350, maxHeight: 80),
+                  onChanged: (value) {
+                    // final files = controller.searchFiles(value);
+                    // filesAnalyzed.value = files;
+                  },
                 );
               } else {
                 return const SizedBox();
@@ -124,77 +135,77 @@ class _MapMindBasePageState extends State<MapMindBasePage>
         ],
       ),
       body: ValueListenableBuilder(
-          valueListenable: controller.state,
-          builder: (context, state, child) {
-            if (state.isSuccess) {
-              final analyzerInfo = state.asSuccess;
-              final text = RegExp(searchControllerEditing.text.trim());
-              log('regex: $text');
+        valueListenable: controller.state,
+        builder: (context, state, child) {
+          if (state.isSuccess) {
+            final analyzerInfo = state.asSuccess;
 
-              return Row(
-                children: [
-                  ValueListenableBuilder(
-                      valueListenable: selectedIndex,
-                      builder: (context, _, child) {
-                        return NavigationRail(
-                          destinations: const [
-                            NavigationRailDestination(
-                              icon: Icon(Icons.folder),
-                              label: Text('Files'),
-                            ),
-                            NavigationRailDestination(
-                              icon: Icon(Icons.map),
-                              label: Text('Mind Map'),
-                            ),
-                          ],
-                          selectedIndex: 1,
-                          onDestinationSelected: (index) {},
-                        );
-                      }),
-                  const SizedBox(width: 10),
-                  ValueListenableBuilder(
-                    valueListenable: indexPage,
-                    builder: (context, index, child) {
-                      return Expanded(
-                        child: ValueListenableBuilder(
-                          valueListenable: searchControllerEditing,
-                          builder: (context, _, child) {
-                            final filterFiles = filesFiltered(analyzerInfo);
-                            return PageView(
-                              controller: pageViewController,
-                              children: [
-                                MapMindPage(
-                                  analyzerInfo: analyzerInfo,
-                                  filterFiles: filterFiles,
-                                ),
-                                DeleteSuggestFilesPage(
-                                  filterFiles: filterFiles,
-                                ),
-                              ],
-                            );
-                          },
-                        ),
+            return Row(
+              children: [
+                ValueListenableBuilder(
+                    valueListenable: selectedIndex,
+                    builder: (context, _, child) {
+                      return NavigationRail(
+                        destinations: const [
+                          NavigationRailDestination(
+                            icon: Icon(Icons.folder),
+                            label: Text('Files'),
+                          ),
+                          NavigationRailDestination(
+                            icon: Icon(Icons.map),
+                            label: Text('Mind Map'),
+                          ),
+                        ],
+                        selectedIndex: 1,
+                        onDestinationSelected: (index) {},
                       );
-                    },
-                  ),
-                ],
-              );
-            } else if (state.isLoading) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            } else if (state.isError) {
-              return Center(
-                child: Text(state.asError.message),
-              );
-            } else {
-              return SearchFilesFilterForm(
-                onSubmit: (filter) {
-                  controller.getFilesAnalysis(filter);
-                },
-              );
-            }
-          }),
+                    }),
+                const SizedBox(width: 10),
+                ValueListenableBuilder(
+                  valueListenable: indexPage,
+                  builder: (context, index, child) {
+                    return Expanded(
+                      child: ValueListenableBuilder(
+                        valueListenable: searchControllerEditing,
+                        builder: (context, _, child) {
+                          final filterFiles = filesFiltered(analyzerInfo);
+                          return PageView(
+                            physics: const NeverScrollableScrollPhysics(),
+                            controller: pageViewController,
+                            children: [
+                              MapMindPage(
+                                analyzerInfo: analyzerInfo,
+                                filterFiles: filterFiles,
+                              ),
+                              DeleteSuggestFilesPage(
+                                filterFiles: filterFiles,
+                              ),
+                            ],
+                          );
+                        },
+                      ),
+                    );
+                  },
+                ),
+              ],
+            );
+          } else if (state.isLoading) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          } else if (state.isError) {
+            return Center(
+              child: Text(state.asError.message),
+            );
+          } else {
+            return SearchFilesFilterForm(
+              onSubmit: (filter) {
+                controller.getFilesAnalysis(filter);
+              },
+            );
+          }
+        },
+      ),
     );
   }
 }
