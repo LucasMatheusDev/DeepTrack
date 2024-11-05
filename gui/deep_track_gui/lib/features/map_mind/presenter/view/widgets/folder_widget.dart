@@ -6,14 +6,13 @@ class FolderWidget extends StatefulWidget {
   final void Function(bool value) onTapExpand;
   final bool isExpanded;
   final void Function(Pattern patternReferences)? onTapReferences;
-  final bool showReferencesButton;
+
   const FolderWidget({
     Key? key,
     required this.fileTarget,
     required this.onTapExpand,
     required this.isExpanded,
     required this.onTapReferences,
-    this.showReferencesButton = true,
   }) : super(key: key);
 
   @override
@@ -34,10 +33,12 @@ class _FolderWidgetState extends State<FolderWidget> {
     return RegExp(widget.fileTarget.references.join("|"));
   }
 
+  bool get canExpand => widget.fileTarget.imports.isNotEmpty;
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: toggleExpand,
+      onTap: canExpand ? toggleExpand : null,
       child: Container(
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
@@ -59,10 +60,13 @@ class _FolderWidgetState extends State<FolderWidget> {
                   style: const TextStyle(
                       fontSize: 18, fontWeight: FontWeight.bold),
                 ),
-                IconButton(
-                  icon:
-                      Icon(isExpanded ? Icons.expand_less : Icons.expand_more),
-                  onPressed: toggleExpand,
+                Visibility(
+                  visible: canExpand,
+                  child: IconButton(
+                    icon: Icon(
+                        isExpanded ? Icons.expand_less : Icons.expand_more),
+                    onPressed: toggleExpand,
+                  ),
                 ),
               ],
             ),
@@ -91,7 +95,7 @@ class _FolderWidgetState extends State<FolderWidget> {
                         style: const TextStyle(fontSize: 12),
                       ),
                       Visibility(
-                        visible: widget.showReferencesButton,
+                        visible: widget.fileTarget.references.isNotEmpty,
                         child: IconButton(
                           icon: const Icon(Icons.map),
                           onPressed: () {

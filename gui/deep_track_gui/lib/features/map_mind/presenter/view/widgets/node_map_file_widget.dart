@@ -63,12 +63,6 @@ class _NodeMapFileWidgetState extends State<NodeMapFileWidget> {
     return RegExp(widget.fileTarget.references.join("|"));
   }
 
-  bool hasActiveReferences() {
-    return widget.allFiles.where((element) {
-      return byReferences().hasMatch(element.path);
-    }).isNotEmpty;
-  }
-
   @override
   Widget build(BuildContext context) {
     final children = getChildren();
@@ -91,7 +85,6 @@ class _NodeMapFileWidgetState extends State<NodeMapFileWidget> {
                 FolderWidget(
                     isExpanded: _isExpanded.value,
                     fileTarget: widget.fileTarget,
-                    showReferencesButton: hasActiveReferences(),
                     onTapReferences: (_) {
                       Navigator.of(context).push(MaterialPageRoute(
                         builder: (context) => MapaMindPage(
