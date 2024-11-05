@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'dart:io';
 import 'dart:ui';
 
+import 'package:deep_track_gui/core/application_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:path_provider/path_provider.dart';
@@ -30,6 +31,7 @@ class _ButtonTakeScreenShotState extends State<ButtonTakeScreenShot> {
   }
 
   Future<void> takeScreenshot() async {
+    ApplicationController().showLoading();
     final boundary = widget.repaintBoundaryKey.currentContext
         ?.findRenderObject() as RenderRepaintBoundary?;
     if (boundary == null) {
@@ -70,10 +72,14 @@ class _ButtonTakeScreenShotState extends State<ButtonTakeScreenShot> {
     } else {
       log("Erro ao converter a imagem para ByteData.");
     }
+
+    ApplicationController().hideLoading();
   }
 
   Future<void> downloadFileFromBytes(List<int> bytes) async {
     try {
+      ApplicationController().showLoading();
+
       // Obtém o diretório onde o arquivo será salvo
       final date = DateTime.now().toIso8601String();
       final dateName = date.replaceAll(":", "_").replaceAll(".", "_");
@@ -93,6 +99,7 @@ class _ButtonTakeScreenShotState extends State<ButtonTakeScreenShot> {
           ),
         );
       }
+      ApplicationController().hideLoading();
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
