@@ -1,6 +1,8 @@
 import 'dart:developer';
 
+import 'package:deep_track_gui/core/utils/string_extension.dart';
 import 'package:deep_track_gui/features/map_mind/domain/entities/file_map_analyzer.dart';
+import 'package:deep_track_gui/features/map_mind/domain/entities/map_mind_entity.dart';
 import 'package:deep_track_gui/features/map_mind/presenter/view/map_mind_base_view.dart';
 import 'package:deep_track_gui/features/map_mind/presenter/view/widgets/button_take_screenshot_widget.dart';
 import 'package:deep_track_gui/features/map_mind/presenter/view/widgets/folder_widget.dart';
@@ -86,14 +88,15 @@ class _NodeMapFileWidgetState extends State<NodeMapFileWidget> {
                     isExpanded: _isExpanded.value,
                     fileTarget: widget.fileTarget,
                     onTapReferences: (_) {
+                      final fileAnalyzer = FilesAnalyzerInfo(
+                        widget.allFiles,
+                      );
+                      fileAnalyzer.updateRule(
+                          (file) => byReferences().hasMatch(file.path));
                       Navigator.of(context).push(MaterialPageRoute(
                         builder: (context) => MapMindBasePage(
-                          title: "References by ${widget.fileTarget.nameFile}",
-                          pattern: byReferences(),
-                          filterFiles: widget.allFiles.where((element) {
-                            return byReferences().hasMatch(element.path);
-                          }).toList(),
-                          allFiles: widget.allFiles,
+                          title: "References by ${widget.fileTarget.nameFile.capitalize()}",
+                          analyzerInfo: fileAnalyzer,
                         ),
                       ));
                     },
