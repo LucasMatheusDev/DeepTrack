@@ -14,10 +14,10 @@ class MapMindUseCase {
   ) async {
     final filesAnalyzed = await getFilesMap(filter);
 
-    return Answer.success(FilesAnalyzerInfo(filesAnalyzed));
+    return Answer.success(filesAnalyzed);
   }
 
-  Future<List<FileMapMindAnalyzer>> getFilesMap(
+  Future<FilesAnalyzerInfo> getFilesMap(
     SearchFilesFilter filter,
   ) async {
     final filesSystem = await getSystemFiles(filter);
@@ -25,14 +25,18 @@ class MapMindUseCase {
       filesSystem,
       importPattern: filter.imporPattern,
     );
-    return filesAnalyzed.fileAnalyzers
-        .map((e) => FileMapMindAnalyzer(
-              nameFile: e.nameFile,
-              imports: e.imports,
-              path: e.path,
-              references: e.references,
-            ))
-        .toList();
+
+    return FilesAnalyzerInfo(
+      filesAnalyzed.fileAnalyzers
+          .map((e) => FileMapMindAnalyzer(
+                nameFile: e.nameFile,
+                imports: e.imports,
+                path: e.path,
+                references: e.references,
+              ))
+          .toList(),
+      layers: filesAnalyzed.analyzeLayers().values.toList(),
+    );
   }
 
   Future<List<FileSystemEntity>> getSystemFiles(
