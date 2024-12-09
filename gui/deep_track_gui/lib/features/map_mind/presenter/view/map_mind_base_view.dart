@@ -1,8 +1,11 @@
 import 'dart:developer';
 
+import 'package:deep_track_gui/core/page_state.dart';
+import 'package:deep_track_gui/core/utils/string_extension.dart';
 import 'package:deep_track_gui/features/map_mind/domain/entities/file_map_analyzer.dart';
 import 'package:deep_track_gui/features/map_mind/domain/entities/map_mind_entity.dart';
 import 'package:deep_track_gui/features/map_mind/presenter/controllers/map_mind_controller.dart';
+import 'package:deep_track_gui/features/map_mind/presenter/view/pages/clean_arch_view.dart';
 import 'package:deep_track_gui/features/map_mind/presenter/view/pages/delete_suggest_files_page.dart';
 import 'package:deep_track_gui/features/map_mind/presenter/view/pages/map_mind_page.dart';
 import 'package:deep_track_gui/features/map_mind/presenter/view/widgets/searching_filter_form.dart';
@@ -10,15 +13,11 @@ import 'package:flutter/material.dart';
 
 class MapMindBasePage extends StatefulWidget {
   final String title;
-  final Pattern? pattern;
-  final List<FileMapMindAnalyzer>? filterFiles;
-  final List<FileMapMindAnalyzer>? allFiles;
+  final FilesAnalyzerInfo? analyzerInfo;
   const MapMindBasePage({
     super.key,
     this.title = 'Mind Map Project',
-    this.pattern,
-    this.filterFiles,
-    this.allFiles,
+    this.analyzerInfo,
   });
 
   @override
@@ -33,23 +32,20 @@ class _MapMindBasePageState extends State<MapMindBasePage>
 
   final selectedIndex = ValueNotifier<int>(0);
 
-  late final searchControllerEditing = TextEditingController(
-      text: widget.pattern is RegExp
-          ? (widget.pattern as RegExp).pattern
-          : widget.pattern?.toString());
+  late final searchControllerEditing = TextEditingController();
   final TransformationController transformationController =
       TransformationController();
 
   final pageViewController = PageController();
   late final TabController tabController =
-      TabController(length: 2, vsync: this);
+      TabController(length: 3, vsync: this);
 
   final indexPage = ValueNotifier<int>(0);
 
   @override
   void initState() {
-    if (widget.allFiles?.isNotEmpty == true) {
-      controller.initialValue(widget.allFiles!);
+    if (widget.analyzerInfo != null) {
+      controller.state.value = SuccessState(data: widget.analyzerInfo!);
     }
     super.initState();
   }
@@ -68,7 +64,8 @@ class _MapMindBasePageState extends State<MapMindBasePage>
       log('regex: $searchRegex');
       final String pattern = searchControllerEditing.text.trim();
 
-      final filerFiles = (widget.filterFiles ?? analyzerInfo.fileAnalyzer)
+      final filerFiles = analyzerInfo
+          .byFilter()
           .where(
             (element) =>
                 searchRegex?.hasMatch(element.path) == true ||
@@ -105,9 +102,13 @@ class _MapMindBasePageState extends State<MapMindBasePage>
               icon: Icon(Icons.delete_forever),
               text: 'Analyzer Delete files',
             ),
+            Tab(
+              icon: Icon(Icons.layers),
+              text: 'Layers',
+            ),
           ],
         ),
-        title: Text(widget.title),
+        title: Text(widget.title.capitalize()),
         toolbarHeight: 80,
         actions: [
           ValueListenableBuilder(
@@ -180,6 +181,14 @@ class _MapMindBasePageState extends State<MapMindBasePage>
                               DeleteSuggestFilesPage(
                                 filterFiles: filterFiles,
                               ),
+                              if (analyzerInfo.layers.isNotEmpty)
+                                CleanArchVisualization(
+                                  layers: analyzerInfo.layerByFilter(
+                                      filter: (layer) =>
+                                          searchRegex
+                                              ?.hasMatch(layer.toString()) ==
+                                          true),
+                                ),
                             ],
                           );
                         },
