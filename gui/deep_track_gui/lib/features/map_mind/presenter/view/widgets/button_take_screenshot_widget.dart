@@ -130,7 +130,7 @@ class _ButtonTakeScreenShotState extends State<ButtonTakeScreenShot> {
             // takeScreenshot();
           },
           icon: Icon(
-            Icons.camera_alt_outlined,
+            Icons.camera_outlined,
             color: Theme.of(context).primaryColor,
           ),
         ),

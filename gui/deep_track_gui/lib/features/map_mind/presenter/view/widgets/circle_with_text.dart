@@ -44,6 +44,7 @@ class CircleWithText extends StatelessWidget {
                   fixedHover.value = null;
                 } else {
                   fixedHover.value = layer;
+                  onHoverLayer?.call(layer);
                 }
               },
               child: Stack(
