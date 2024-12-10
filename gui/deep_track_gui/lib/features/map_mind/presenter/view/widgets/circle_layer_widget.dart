@@ -59,7 +59,10 @@ class _CircleLayerWidgetState extends State<CircleLayerWidget> {
           final double radius = size / 2 - (index * layerThickness);
 
           return Opacity(
-            opacity: widget.layerSelected == layer ? 1 : 0.5,
+            opacity:
+                widget.layerSelected == null || widget.layerSelected == layer
+                    ? 1
+                    : 0.5,
             child: CircleWithText(
               totalLayers: layersLength,
               layer: layer,
