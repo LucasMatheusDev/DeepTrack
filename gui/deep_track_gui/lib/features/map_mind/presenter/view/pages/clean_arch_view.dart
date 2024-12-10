@@ -90,34 +90,16 @@ class _CleanArchVisualizationState extends State<CleanArchVisualization> {
                                     child: ValueListenableBuilder(
                                       valueListenable: selectedLayer,
                                       builder: (context, layerSelected, _) =>
-                                          Visibility(
-                                        visible: false,
-                                        replacement: CircleLayerWidget(
-                                          layers: sortLayers,
-                                          layerSelected: layerSelected,
-                                          enableHover: enableHover.value,
-                                          onHoverLayer: (layer) {
-                                            if (layer != layerSelected &&
-                                                enableHover.value) {
-                                              selectedLayer.value = layer;
-                                            }
-                                          },
-                                        ),
-                                        child: Stack(
-                                          alignment: Alignment.center,
-                                          children: buildLayerCircles(
-                                            size: 550,
-                                            layers: sortLayers,
-                                            center: const Offset(275, 275),
-                                            selectedLayer: layerSelected,
-                                            onHoverLayer: (layer) {
-                                              if (layer != layerSelected &&
-                                                  enableHover.value) {
-                                                selectedLayer.value = layer;
-                                              }
-                                            },
-                                          ),
-                                        ),
+                                          CircleLayerWidget(
+                                        layers: sortLayers,
+                                        layerSelected: layerSelected,
+                                        enableHover: enableHover.value,
+                                        onHoverLayer: (layer) {
+                                          if (layer != layerSelected &&
+                                              enableHover.value) {
+                                            selectedLayer.value = layer;
+                                          }
+                                        },
                                       ),
                                     ),
                                   ),
