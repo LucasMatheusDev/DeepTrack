@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:answer/answer.dart';
-import 'package:deep_track_cli/commands/analyzer_imports_command.dart';
+import 'package:deep_track_cli/deep_track_cli.dart';
 import 'package:deep_track_gui/features/map_mind/domain/entities/file_map_analyzer.dart';
 import 'package:deep_track_gui/features/map_mind/domain/entities/map_mind_entity.dart';
 import 'package:deep_track_gui/features/map_mind/domain/entities/search_files_filter.dart';
@@ -35,7 +35,8 @@ class MapMindUseCase {
                 references: e.references,
               ))
           .toList(),
-      layers: filesAnalyzed.analyzeLayers().values.toList(),
+      layers: AnalyzerLayersCommand(fileAnalyzers: filesAnalyzed.fileAnalyzers)
+          .analyzeLayers(),
     );
   }
 
