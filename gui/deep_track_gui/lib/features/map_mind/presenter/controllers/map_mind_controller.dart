@@ -1,3 +1,4 @@
+import 'package:deep_track_cli/models/file_analyzer.dart';
 import 'package:deep_track_gui/core/page_state.dart';
 import 'package:deep_track_gui/core/value_notifier_state.dart';
 import 'package:deep_track_gui/features/map_mind/domain/entities/file_map_analyzer.dart';
@@ -14,7 +15,7 @@ class MapMindProjectController {
     if (state.value.isSuccess) {
       final currentFiles = state.value.asSuccess.fileAnalyzer;
       currentFiles.addAll(files);
-    }else{
+    } else {
       state.value = SuccessState(data: FilesAnalyzerInfo(files));
     }
   }
@@ -28,5 +29,12 @@ class MapMindProjectController {
       onSuccess: state.changeToSuccessState,
       onFail: state.changeToErrorState,
     );
+  }
+
+  void deleteFile(FileAnalyzer file) {
+    if (state.value.isSuccess) {
+      state.asSuccess.fileAnalyzer.remove(file);
+      state.value = SuccessState(data: state.asSuccess);
+    }
   }
 }

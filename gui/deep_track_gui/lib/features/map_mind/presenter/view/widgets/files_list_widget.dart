@@ -63,6 +63,7 @@ class _FilesListWidgetState extends State<FilesListWidget>
       await fileSystem.delete();
       setState(() {
         widget.files.remove(target);
+        widget.onDeletedFile?.call(target);
       });
 
       if (context.mounted) {
@@ -155,9 +156,10 @@ class _FilesListWidgetState extends State<FilesListWidget>
                                             // abrir no explorador de arquivos
                                             onPressed: () async {
                                               if (await canLaunchUrlString(
-                                                  file.path)) {
+                                                  'file:${file.path}')) {
                                                 await launchUrlString(
-                                                    file.path);
+                                                  'file:${file.path}',
+                                                );
                                               }
                                             },
                                           ),

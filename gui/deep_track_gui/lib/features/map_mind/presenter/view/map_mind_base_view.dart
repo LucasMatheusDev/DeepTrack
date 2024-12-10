@@ -179,6 +179,9 @@ class _MapMindBasePageState extends State<MapMindBasePage>
                                 filterFiles: filterFiles,
                               ),
                               DeleteSuggestFilesPage(
+                                onDeletedFile: (file) {
+                                  controller.deleteFile(file);
+                                },
                                 filterFiles: filterFiles,
                               ),
                               if (analyzerInfo.layers.isNotEmpty)
