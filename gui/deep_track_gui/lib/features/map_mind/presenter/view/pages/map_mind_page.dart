@@ -6,7 +6,7 @@ import 'package:deep_track_gui/features/map_mind/presenter/view/widgets/not_foun
 import 'package:flutter/material.dart';
 import 'package:mind_map/mind_map.dart';
 
-class MapMindPage extends StatelessWidget {
+class MapMindPage extends StatefulWidget {
   final FilesAnalyzerInfo analyzerInfo;
   final List<FileMapMindAnalyzer> filterFiles;
   const MapMindPage({
@@ -16,16 +16,40 @@ class MapMindPage extends StatelessWidget {
   });
 
   @override
+  State<MapMindPage> createState() => _MapMindPageState();
+}
+
+class _MapMindPageState extends State<MapMindPage> {
+  TransformationController transformationController = TransformationController(
+    Matrix4.identity(),
+  );
+
+  Future<void> resetPositionAndZoom() async {
+    transformationController.toScene(const Offset(0, 0));
+    transformationController.value = Matrix4.identity();
+  }
+
+  @override
+  void didUpdateWidget(MapMindPage oldWidget) {
+    if (oldWidget.filterFiles != widget.filterFiles) {
+      resetPositionAndZoom();
+    }
+    super.didUpdateWidget(oldWidget);
+  }
+
+  @override
   Widget build(BuildContext context) {
     final repaintBoundaryKey = GlobalKey();
+
     return Visibility(
-      visible: filterFiles.isNotEmpty,
+      visible: widget.filterFiles.isNotEmpty,
       replacement: const NotFound(message: 'No files to show'),
       child: SafeArea(
         child: InteractiveViewer(
+          transformationController: transformationController,
           boundaryMargin: const EdgeInsets.all(100),
           minScale: 0.1,
-          maxScale: 2.5,
+          maxScale: 4,
           constrained: false,
           child: Row(
             children: [
@@ -39,10 +63,10 @@ class MapMindPage extends StatelessWidget {
                   RepaintBoundary(
                     key: repaintBoundaryKey,
                     child: MindMap(
-                      children: filterFiles
+                      children: widget.filterFiles
                           .map((file) => NodeMapFileWidget(
                                 fileTarget: file,
-                                allFiles: analyzerInfo.fileAnalyzer,
+                                allFiles: widget.analyzerInfo.fileAnalyzer,
                               ))
                           .toList(),
                     ),
