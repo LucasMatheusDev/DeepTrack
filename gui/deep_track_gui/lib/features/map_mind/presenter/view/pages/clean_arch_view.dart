@@ -69,7 +69,7 @@ class _CleanArchVisualizationState extends State<CleanArchVisualization> {
             LayoutBuilder(
               builder: (context, constraints) {
                 final double size = constraints.maxWidth * 0.45;
-                final sortLayers = sortLayersByFlowImport();
+
                 return SingleChildScrollView(
                   child: Row(
                     children: [
@@ -91,7 +91,7 @@ class _CleanArchVisualizationState extends State<CleanArchVisualization> {
                                       valueListenable: selectedLayer,
                                       builder: (context, layerSelected, _) =>
                                           CircleLayerWidget(
-                                        layers: sortLayers,
+                                        layers: widget.layers,
                                         layerSelected: layerSelected,
                                         enableHover: enableHover.value,
                                         onHoverLayer: (layer) {
