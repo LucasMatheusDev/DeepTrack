@@ -5,7 +5,7 @@ import 'package:deep_track_gui/features/map_mind/domain/entities/map_mind_entity
 import 'package:deep_track_gui/features/map_mind/presenter/view/map_mind_base_view.dart';
 import 'package:deep_track_gui/features/map_mind/presenter/view/widgets/button_take_screenshot_widget.dart';
 import 'package:deep_track_gui/features/map_mind/presenter/view/widgets/circle_layer_widget.dart';
-import 'package:deep_track_gui/features/map_mind/presenter/view/widgets/layer_files_widget.dart';
+import 'package:deep_track_gui/features/map_mind/presenter/view/widgets/files_list_widget.dart';
 import 'package:deep_track_gui/features/map_mind/presenter/view/widgets/not_found_widget.dart';
 import 'package:flutter/material.dart';
 
@@ -244,7 +244,11 @@ class _CleanArchVisualizationState extends State<CleanArchVisualization> {
                 valueListenable: selectedLayer,
                 builder: (context, layer, _) {
                   if (layer == null) return const SizedBox();
-                  return LayerFilesWidget(files: layer.files);
+                  return Expanded(
+                    child: FilesListWidget(
+                      files: layer.allFiles(),
+                    ),
+                  );
                 },
               ),
             ],
