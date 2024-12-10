@@ -45,36 +45,88 @@ class _MapMindPageState extends State<MapMindPage> {
       visible: widget.filterFiles.isNotEmpty,
       replacement: const NotFound(message: 'No files to show'),
       child: SafeArea(
-        child: InteractiveViewer(
-          transformationController: transformationController,
-          boundaryMargin: const EdgeInsets.all(100),
-          minScale: 0.1,
-          maxScale: 4,
-          constrained: false,
-          child: Row(
-            children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  ButtonTakeScreenShot(
-                    isVisible: true,
-                    repaintBoundaryKey: repaintBoundaryKey,
-                  ),
-                  RepaintBoundary(
-                    key: repaintBoundaryKey,
-                    child: MindMap(
-                      children: widget.filterFiles
-                          .map((file) => NodeMapFileWidget(
-                                fileTarget: file,
-                                allFiles: widget.analyzerInfo.fileAnalyzer,
-                              ))
-                          .toList(),
+        child: Stack(
+          children: [
+            InteractiveViewer(
+              transformationController: transformationController,
+              boundaryMargin: const EdgeInsets.all(100),
+              minScale: 0.1,
+              maxScale: 2,
+              constrained: false,
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  minHeight: MediaQuery.sizeOf(context).height,
+                  minWidth: MediaQuery.sizeOf(context).width,
+                ),
+                child: Row(
+                  children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        ButtonTakeScreenShot(
+                          isVisible: true,
+                          repaintBoundaryKey: repaintBoundaryKey,
+                        ),
+                        RepaintBoundary(
+                          key: repaintBoundaryKey,
+                          child: MindMap(
+                            children: widget.filterFiles
+                                .map((file) => NodeMapFileWidget(
+                                      fileTarget: file,
+                                      allFiles:
+                                          widget.analyzerInfo.fileAnalyzer,
+                                    ))
+                                .toList(),
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ],
-          ),
+            ),
+            Positioned(
+              bottom: 0,
+              right: 0,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.zoom_out),
+                      onPressed: () {
+                        transformationController.value *=
+                            Matrix4.diagonal3Values(
+                          0.9,
+                          0.9,
+                          1,
+                        );
+                      },
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.zoom_in),
+                      onPressed: () {
+                        transformationController.value *=
+                            Matrix4.diagonal3Values(
+                          1.1,
+                          1.1,
+                          1,
+                        );
+                      },
+                    ),
+                    // up
+                    IconButton(
+                      icon: const Icon(Icons.arrow_upward),
+                      onPressed: () {
+                        // para o topo
+                        resetPositionAndZoom();
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
