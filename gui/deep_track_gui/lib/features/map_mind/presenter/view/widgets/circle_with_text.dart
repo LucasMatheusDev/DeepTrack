@@ -25,6 +25,8 @@ class CircleWithText extends StatelessWidget {
   List<String> get texts =>
       ([layer.name] + layer.subLayers.map((e) => e.name).toList())
           .toSet()
+          .toList()
+          .take(12)
           .toList();
   static final ValueNotifier<Layer?> fixedHover = ValueNotifier(null);
 
@@ -55,7 +57,7 @@ class CircleWithText extends StatelessWidget {
                       return Visibility(
                         visible: hover == layer,
                         child: Positioned(
-                          left: radius - 20,
+                          left: radius - 40,
                           child: IconButton(
                             icon: const Icon(
                               Icons.gps_fixed,
@@ -95,10 +97,10 @@ class CircleWithText extends StatelessWidget {
             return Padding(
               padding: EdgeInsets.only(left: radius, top: radius),
               child: TextAlongCircle(
+                index: (textIndex > 1 ? textIndex * 2 : textIndex).toInt(),
                 angleStep: angleStep,
-                radius: radius,
+                radius: radius + (textIndex / 4 > 1 ? (textIndex / 4) + 20 : 0),
                 text: e.capitalize(),
-                index: textIndex,
                 color: Colors.primaries[(index % Colors.primaries.length)],
               ),
             );
