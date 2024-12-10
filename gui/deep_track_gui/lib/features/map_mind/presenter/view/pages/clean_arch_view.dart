@@ -81,7 +81,10 @@ class _CleanArchVisualizationState extends State<CleanArchVisualization> {
                                 valueListenable: rotateNotifier,
                                 builder: (context, rotate, _) =>
                                     InteractiveViewer(
-                                  boundaryMargin: const EdgeInsets.all(50),
+                                  minScale: 0.1,
+                                  maxScale: 4,
+                                  alignment: Alignment.center,
+                                  boundaryMargin: const EdgeInsets.all(30),
                                   child: Transform.rotate(
                                     angle: rotate,
                                     child: ConstrainedBox(
@@ -260,6 +263,7 @@ class _CleanArchVisualizationState extends State<CleanArchVisualization> {
                   if (layer == null) return const SizedBox();
                   return Expanded(
                     child: FilesListWidget(
+                      showDeleteButton: false,
                       files: layer.allFiles(),
                     ),
                   );

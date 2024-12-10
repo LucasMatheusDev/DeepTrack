@@ -12,6 +12,7 @@ class FilesListWidget extends StatefulWidget {
   final List<FileAnalyzer> selectedFiles;
   final void Function(FileAnalyzer file)? onSelectedFile;
   final void Function(FileAnalyzer file)? onDeletedFile;
+  final bool showDeleteButton;
 
   const FilesListWidget({
     Key? key,
@@ -20,6 +21,7 @@ class FilesListWidget extends StatefulWidget {
     this.selectedFiles = const [],
     this.onSelectedFile,
     this.onDeletedFile,
+    this.showDeleteButton = true,
   }) : super(key: key);
 
   @override
@@ -180,9 +182,12 @@ class _FilesListWidgetState extends State<FilesListWidget>
                                               }
                                             },
                                           ),
-                                          IconButton(
-                                            icon: const Icon(Icons.delete),
-                                            onPressed: () => deleteFile(file),
+                                          Visibility(
+                                            visible: widget.showDeleteButton,
+                                            child: IconButton(
+                                              icon: const Icon(Icons.delete),
+                                              onPressed: () => deleteFile(file),
+                                            ),
                                           ),
                                         ],
                                       ),
