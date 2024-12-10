@@ -12,15 +12,21 @@ class DeleteSuggestFilesPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: filesFilteredWithNoReferences.length,
-      itemBuilder: (context, index) {
-        final file = filesFilteredWithNoReferences[index];
-        return ListTile(
-          title: Text(file.path),
-          subtitle: Text(file.references.join('\n')),
-        );
-      },
+    return Visibility(
+      visible: filesFilteredWithNoReferences.isNotEmpty,
+      replacement: const Center(
+        child: Text('No files to delete'),
+      ),
+      child: ListView.builder(
+        itemCount: filesFilteredWithNoReferences.length,
+        itemBuilder: (context, index) {
+          final file = filesFilteredWithNoReferences[index];
+          return ListTile(
+            title: Text(file.path),
+            subtitle: Text(file.references.join('\n')),
+          );
+        },
+      ),
     );
   }
 }
