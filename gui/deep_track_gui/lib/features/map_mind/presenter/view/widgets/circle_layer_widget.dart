@@ -54,15 +54,15 @@ class _CircleLayerWidgetState extends State<CircleLayerWidget> {
     return Stack(
       alignment: Alignment.center,
       children: [
-        ...sortLayers.map((e) {
-          final index = sortLayers.indexOf(e);
+        ...sortLayers.map((layer) {
+          final index = sortLayers.indexOf(layer);
           final double radius = size / 2 - (index * layerThickness);
 
           return Opacity(
-            opacity: widget.layerSelected == e ? 1 : 0.5,
+            opacity: widget.layerSelected == layer ? 1 : 0.5,
             child: CircleWithText(
               totalLayers: layersLength,
-              layer: e,
+              layer: layer,
               index: index,
               onHoverLayer: widget.onHoverLayer,
               radius: radius,
