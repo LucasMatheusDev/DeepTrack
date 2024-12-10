@@ -27,35 +27,6 @@ class _CleanArchVisualizationState extends State<CleanArchVisualization> {
   final selectedLayer = ValueNotifier<Layer?>(null);
 
   final enableHover = ValueNotifier<bool>(true);
-  List<Layer> sortLayersByFlowImport() {
-    final visited = <Layer>{};
-    final sortedLayers = <Layer>[];
-
-    void visit(Layer layer) {
-      if (visited.contains(layer)) return;
-      visited.add(layer);
-
-      for (final reference in layer.references) {
-        final dependentLayer = widget.layers
-            .firstWhere((l) => l.name == reference.name, orElse: () => layer);
-        visit(dependentLayer);
-      }
-
-      sortedLayers.add(layer);
-    }
-
-    for (final layer in widget.layers) {
-      visit(layer);
-    }
-
-    return sortedLayers;
-  }
-
-  @override
-  void initState() {
-    sortLayersByFlowImport();
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
