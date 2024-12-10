@@ -151,7 +151,7 @@ class _FilesListWidgetState extends State<FilesListWidget>
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
                                           IconButton(
-                                            icon: const Icon(Icons.open_in_new),
+                                            icon: const Icon(Icons.folder),
                                             // abrir no explorador de arquivos
                                             onPressed: () async {
                                               if (await canLaunchUrlString(
@@ -184,7 +184,12 @@ class _FilesListWidgetState extends State<FilesListWidget>
                                           ),
                                         ],
                                       ),
-                                      title: Text(file.nameFile),
+                                      title: ConstrainedBox(
+                                        constraints: const BoxConstraints(
+                                          maxHeight: 200,
+                                        ),
+                                        child: Text(file.nameFile),
+                                      ),
                                     ),
                                     Visibility(
                                       visible: value,
