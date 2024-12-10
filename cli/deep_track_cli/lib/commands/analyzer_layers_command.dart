@@ -151,6 +151,7 @@ class AnalyzerLayersCommand {
       final validLayerRules = [
         !part.contains('feature') && !part.contains('modules'),
         !part.contains('lib'),
+        !part.contains('src'),
         !part.contains(':') && !part.contains('.'),
         !(previousPart?.contains('feature') ?? false),
         !(previousPart?.contains('module') ?? false),
@@ -158,6 +159,8 @@ class AnalyzerLayersCommand {
         (parts.contains('lib')
             ? parts.indexOf(part) > parts.indexOf('lib')
             : true),
+            (parts.contains('C:') ? parts.indexOf(part) > parts.indexOf('C:') : true),
+            (parts.contains('src') ? parts.indexOf(part) > parts.indexOf('src') : true),
       ];
 
       if (validatePattern != null) {
