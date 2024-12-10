@@ -36,7 +36,9 @@ class CircleWithText extends StatelessWidget {
       opacity: focusLayer == layer ? 1 : 0.5,
       child: MouseRegion(
         onHover: (event) {
-          onHoverLayer?.call(layer);
+          if (enableHover && fixedHover.value == null) {
+            onHoverLayer?.call(layer);
+          }
         },
         child: GestureDetector(
           onTap: () {
