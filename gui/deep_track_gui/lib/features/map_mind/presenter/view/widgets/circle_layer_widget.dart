@@ -7,9 +7,11 @@ class CircleLayerWidget extends StatefulWidget {
   final Layer? layerSelected;
   final bool enableHover;
   final void Function(Layer? layer)? onHoverLayer;
+  final double size;
   const CircleLayerWidget({
     super.key,
     required this.layers,
+    required this.size,
     this.layerSelected,
     this.enableHover = true,
     this.onHoverLayer,
@@ -47,16 +49,15 @@ class _CircleLayerWidgetState extends State<CircleLayerWidget> {
   @override
   Widget build(BuildContext context) {
     final sortLayers = sortLayersByFlowImport();
-    const size = 550;
     final layersLength = sortLayers.length;
-    final double layerThickness = size / (layersLength * 2);
+    final double layerThickness = widget.size / (layersLength * 2);
 
     return Stack(
       alignment: Alignment.center,
       children: [
         ...sortLayers.map((layer) {
           final index = sortLayers.indexOf(layer);
-          final double radius = size / 2 - (index * layerThickness);
+          final double radius = widget.size / 2 - (index * layerThickness);
 
           return Opacity(
             opacity:
