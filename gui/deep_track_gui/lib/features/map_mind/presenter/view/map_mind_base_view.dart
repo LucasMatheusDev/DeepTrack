@@ -109,7 +109,7 @@ class _MapMindBasePageState extends State<MapMindBasePage>
           ],
         ),
         title: Text(widget.title.capitalize()),
-        toolbarHeight: 80,
+        toolbarHeight: 90,
         actions: [
           ValueListenableBuilder(
             valueListenable: controller.state,
@@ -119,7 +119,7 @@ class _MapMindBasePageState extends State<MapMindBasePage>
                   controller: searchControllerEditing,
                   leading: const Icon(Icons.search),
                   constraints:
-                      const BoxConstraints(maxWidth: 350, maxHeight: 80),
+                      const BoxConstraints(maxWidth: 350, maxHeight: 100),
                   onChanged: (value) {
                     // final files = controller.searchFiles(value);
                     // filesAnalyzed.value = files;
@@ -143,24 +143,24 @@ class _MapMindBasePageState extends State<MapMindBasePage>
 
             return Row(
               children: [
-                ValueListenableBuilder(
-                    valueListenable: selectedIndex,
-                    builder: (context, _, child) {
-                      return NavigationRail(
-                        destinations: const [
-                          NavigationRailDestination(
-                            icon: Icon(Icons.folder),
-                            label: Text('Files'),
-                          ),
-                          NavigationRailDestination(
-                            icon: Icon(Icons.map),
-                            label: Text('Mind Map'),
-                          ),
-                        ],
-                        selectedIndex: 1,
-                        onDestinationSelected: (index) {},
-                      );
-                    }),
+                // ValueListenableBuilder(
+                //     valueListenable: selectedIndex,
+                //     builder: (context, _, child) {
+                //       return NavigationRail(
+                //         destinations: const [
+                //           NavigationRailDestination(
+                //             icon: Icon(Icons.folder),
+                //             label: Text('Files'),
+                //           ),
+                //           NavigationRailDestination(
+                //             icon: Icon(Icons.map),
+                //             label: Text('Mind Map'),
+                //           ),
+                //         ],
+                //         selectedIndex: 1,
+                //         onDestinationSelected: (index) {},
+                //       );
+                //     }),
                 const SizedBox(width: 10),
                 ValueListenableBuilder(
                   valueListenable: indexPage,
@@ -170,6 +170,10 @@ class _MapMindBasePageState extends State<MapMindBasePage>
                         valueListenable: searchControllerEditing,
                         builder: (context, _, child) {
                           final filterFiles = filesFiltered(analyzerInfo);
+                          final layers = analyzerInfo.layerByFilter(
+                              filter: (layer) =>
+                                  searchRegex?.hasMatch(layer.toString()) ==
+                                  true);
                           return PageView(
                             physics: const NeverScrollableScrollPhysics(),
                             controller: pageViewController,
@@ -186,11 +190,7 @@ class _MapMindBasePageState extends State<MapMindBasePage>
                               ),
                               if (analyzerInfo.layers.isNotEmpty)
                                 CleanArchVisualization(
-                                  layers: analyzerInfo.layerByFilter(
-                                      filter: (layer) =>
-                                          searchRegex
-                                              ?.hasMatch(layer.toString()) ==
-                                          true),
+                                  layers: layers,
                                 ),
                             ],
                           );
