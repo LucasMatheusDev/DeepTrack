@@ -6,6 +6,7 @@ import 'package:deep_track_gui/features/map_mind/presenter/view/map_mind_base_vi
 import 'package:deep_track_gui/features/map_mind/presenter/view/widgets/button_take_screenshot_widget.dart';
 import 'package:deep_track_gui/features/map_mind/presenter/view/widgets/circle_layer_widget.dart';
 import 'package:deep_track_gui/features/map_mind/presenter/view/widgets/files_list_widget.dart';
+import 'package:deep_track_gui/features/map_mind/presenter/view/widgets/info_layer_widget.dart';
 import 'package:deep_track_gui/features/map_mind/presenter/view/widgets/not_found_widget.dart';
 import 'package:flutter/material.dart';
 
@@ -39,78 +40,75 @@ class _CleanArchVisualizationState extends State<CleanArchVisualization> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(
-                child: LayoutBuilder(
-                  builder: (context, constraints) {
-                    final double size = constraints.hasInfiniteWidth
-                        ? 600
-                        : constraints.maxWidth * 0.45;
-                    final double sizeHeight = constraints.hasInfiniteWidth
-                        ? 600
-                        : constraints.maxHeight * 0.9;
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  final double size = constraints.hasInfiniteWidth
+                      ? 600
+                      : constraints.maxWidth * 0.45;
+                  final double sizeHeight = constraints.hasInfiniteWidth
+                      ? 600
+                      : constraints.maxHeight * 0.9;
 
-                    return SingleChildScrollView(
-                      child: Row(
-                        children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              ValueListenableBuilder(
-                                valueListenable: rotateNotifier,
-                                builder: (context, rotate, _) => LimitedBox(
-                                  maxHeight: 50,
-                                  maxWidth: size,
-                                  child: Row(
-                                    children: [
-                                      Slider(
-                                        value: rotateNotifier.value,
-                                        onChanged: (value) =>
-                                            rotateNotifier.value = value,
-                                        min: 0,
-                                        max: 2 * 3.141592653589793,
-                                      ),
-                                      ButtonTakeScreenShot(
-                                        isVisible: true,
-                                        repaintBoundaryKey: repaintBoundaryKey,
-                                      ),
-                                    ],
-                                  ),
+                  return SingleChildScrollView(
+                    child: Row(
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            ValueListenableBuilder(
+                              valueListenable: rotateNotifier,
+                              builder: (context, rotate, _) => LimitedBox(
+                                maxHeight: 50,
+                                maxWidth: size,
+                                child: Row(
+                                  children: [
+                                    Slider(
+                                      value: rotateNotifier.value,
+                                      onChanged: (value) =>
+                                          rotateNotifier.value = value,
+                                      min: 0,
+                                      max: 2 * 3.141592653589793,
+                                    ),
+                                    ButtonTakeScreenShot(
+                                      isVisible: true,
+                                      repaintBoundaryKey: repaintBoundaryKey,
+                                    ),
+                                  ],
                                 ),
                               ),
-                              ValueListenableBuilder(
-                                valueListenable: rotateNotifier,
-                                builder: (context, rotate, _) =>
-                                    InteractiveViewer(
-                                  minScale: 0.1,
-                                  maxScale: 4,
-                                  alignment: Alignment.center,
-                                  boundaryMargin: const EdgeInsets.all(30),
-                                  child: Transform.rotate(
-                                    angle: rotate,
-                                    child: ConstrainedBox(
-                                      constraints: BoxConstraints(
-                                        maxHeight: sizeHeight,
-                                        maxWidth: sizeHeight,
-                                      ),
-                                      child: Center(
-                                        child: ValueListenableBuilder(
-                                          valueListenable: selectedLayer,
-                                          builder:
-                                              (context, layerSelected, _) =>
-                                                  RepaintBoundary(
-                                            key: repaintBoundaryKey,
-                                            child: CircleLayerWidget(
-                                              size: sizeHeight,
-                                              layers: widget.layers,
-                                              layerSelected: layerSelected,
-                                              enableHover: enableHover.value,
-                                              onHoverLayer: (layer) {
-                                                if (layer != layerSelected &&
-                                                    enableHover.value) {
-                                                  selectedLayer.value = layer;
-                                                }
-                                              },
-                                            ),
+                            ),
+                            ValueListenableBuilder(
+                              valueListenable: rotateNotifier,
+                              builder: (context, rotate, _) =>
+                                  InteractiveViewer(
+                                minScale: 0.1,
+                                maxScale: 4,
+                                alignment: Alignment.center,
+                                boundaryMargin: const EdgeInsets.all(30),
+                                child: Transform.rotate(
+                                  angle: rotate,
+                                  child: ConstrainedBox(
+                                    constraints: BoxConstraints(
+                                      maxHeight: sizeHeight,
+                                      maxWidth: sizeHeight,
+                                    ),
+                                    child: Center(
+                                      child: ValueListenableBuilder(
+                                        valueListenable: selectedLayer,
+                                        builder: (context, layerSelected, _) =>
+                                            RepaintBoundary(
+                                          key: repaintBoundaryKey,
+                                          child: CircleLayerWidget(
+                                            size: sizeHeight,
+                                            layers: widget.layers,
+                                            layerSelected: layerSelected,
+                                            enableHover: enableHover.value,
+                                            onHoverLayer: (layer) {
+                                              if (layer != layerSelected &&
+                                                  enableHover.value) {
+                                                selectedLayer.value = layer;
+                                              }
+                                            },
                                           ),
                                         ),
                                       ),
@@ -118,144 +116,102 @@ class _CleanArchVisualizationState extends State<CleanArchVisualization> {
                                   ),
                                 ),
                               ),
-                            ],
-                          ),
-                          ValueListenableBuilder(
-                            valueListenable: selectedLayer,
-                            builder: (context, layer, _) => layer == null
-                                ? const SizedBox()
-                                : SizedBox(
-                                    height: 300,
-                                    width: 300,
-                                    child: SingleChildScrollView(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Row(
-                                            children: [
-                                              IconButton(
-                                                icon: const Icon(Icons.close),
-                                                onPressed: () {
-                                                  selectedLayer.value = null;
-                                                },
-                                              ),
-                                              Flexible(
-                                                child: SizedBox(
-                                                  width: 280,
-                                                  child: Text(
-                                                    layer.name.capitalize(),
-                                                    textAlign: TextAlign.center,
-                                                    style: const TextStyle(
-                                                      fontSize: 18,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
+                            ),
+                          ],
+                        ),
+                        ValueListenableBuilder(
+                          valueListenable: selectedLayer,
+                          builder: (context, layer, _) => layer == null
+                              ? const SizedBox()
+                              : SizedBox(
+                                  height: 300,
+                                  width: 300,
+                                  child: SingleChildScrollView(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            IconButton(
+                                              icon: const Icon(Icons.close),
+                                              onPressed: () {
+                                                selectedLayer.value = null;
+                                              },
+                                            ),
+                                            Flexible(
+                                              child: SizedBox(
+                                                width: 280,
+                                                child: Text(
+                                                  layer.name.capitalize(),
+                                                  textAlign: TextAlign.center,
+                                                  style: const TextStyle(
+                                                    fontSize: 18,
+                                                    fontWeight: FontWeight.bold,
                                                   ),
                                                 ),
                                               ),
-                                              IconButton(
-                                                icon: const Icon(
-                                                    Icons.open_in_new),
-                                                onPressed: () {
-                                                  final allFiles = widget.layers
-                                                      .map((e) => e.allFiles())
-                                                      .expand((file) => file)
-                                                      .toList();
+                                            ),
+                                            IconButton(
+                                              icon:
+                                                  const Icon(Icons.open_in_new),
+                                              onPressed: () {
+                                                final allFiles = widget.layers
+                                                    .map((e) => e.allFiles())
+                                                    .expand((file) => file)
+                                                    .toList();
 
-                                                  final analyzer =
-                                                      FilesAnalyzerInfo(
-                                                    allFiles
-                                                        .map((e) =>
-                                                            FileMapMindAnalyzer(
-                                                              nameFile:
-                                                                  e.nameFile,
-                                                              path: e.path,
-                                                              imports:
-                                                                  e.imports,
-                                                              references:
-                                                                  e.references,
-                                                            ))
-                                                        .toList(),
-                                                    layers: [layer],
-                                                  );
-                                                  analyzer.updateRule((file) =>
-                                                      file.imports.any((ref) =>
-                                                          ref.contains(
-                                                              layer.name) ||
-                                                          layer.subLayers.any(
-                                                              (sub) => ref
-                                                                  .contains(sub
-                                                                      .name))));
+                                                final analyzer =
+                                                    FilesAnalyzerInfo(
+                                                  allFiles
+                                                      .map((e) =>
+                                                          FileMapMindAnalyzer(
+                                                            nameFile:
+                                                                e.nameFile,
+                                                            path: e.path,
+                                                            imports: e.imports,
+                                                            references:
+                                                                e.references,
+                                                          ))
+                                                      .toList(),
+                                                  layers: [layer],
+                                                );
+                                                analyzer.updateRule((file) =>
+                                                    file.imports.any((ref) =>
+                                                        ref.contains(
+                                                            layer.name) ||
+                                                        layer.subLayers.any(
+                                                            (sub) =>
+                                                                ref.contains(sub
+                                                                    .name))));
 
-                                                  Navigator.of(context).push(
-                                                    MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          MapMindBasePage(
-                                                        analyzerInfo: analyzer,
-                                                        title:
-                                                            "Map Mind by ${layer.name.capitalize()}",
-                                                      ),
+                                                Navigator.of(context).push(
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        MapMindBasePage(
+                                                      analyzerInfo: analyzer,
+                                                      title:
+                                                          "Map Mind by ${layer.name.capitalize()}",
                                                     ),
-                                                  );
-                                                },
-                                              ),
-                                            ],
-                                          ),
-                                          const Divider(),
-                                          Visibility(
-                                            visible:
-                                                layer.references.isNotEmpty,
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              children: [
-                                                const Text('References',
-                                                    textAlign: TextAlign.center,
-                                                    style: TextStyle(
-                                                      fontSize: 16,
-                                                    )),
-                                                ...layer.references
-                                                    .map((e) => Text(e.name,
-                                                        style: const TextStyle(
-                                                          fontSize: 12,
-                                                          fontStyle:
-                                                              FontStyle.italic,
-                                                        ))),
-                                                const Divider(),
-                                              ],
+                                                  ),
+                                                );
+                                              },
                                             ),
-                                          ),
-                                          Visibility(
-                                            visible: layer.imports.isNotEmpty,
-                                            child: Column(
-                                              children: [
-                                                const Text('Imports',
-                                                    textAlign: TextAlign.center,
-                                                    style: TextStyle(
-                                                      fontSize: 16,
-                                                    )),
-                                                ...layer.imports
-                                                    .map((e) => Text(e.name,
-                                                        style: const TextStyle(
-                                                          fontSize: 12,
-                                                          fontStyle:
-                                                              FontStyle.italic,
-                                                        ))),
-                                                const Divider(),
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      ),
+                                          ],
+                                        ),
+                                        const Divider(),
+                                        InfoLayerWidget(
+                                          layer: layer,
+                                        ),
+                                      ],
                                     ),
                                   ),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                ),
+                                ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
               ),
               ValueListenableBuilder(
                 valueListenable: selectedLayer,
