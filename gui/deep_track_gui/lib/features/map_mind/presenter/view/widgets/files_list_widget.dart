@@ -58,7 +58,8 @@ class _FilesListWidgetState extends State<FilesListWidget>
     super.dispose();
   }
 
-  Future<void> deleteFile(FileAnalyzer target) async {
+  Future<void> deleteFile(FileAnalyzer target,
+      {bool showSnackDeleted = false}) async {
     try {
       ApplicationController().showLoading();
       final fileSystem = File(target.path);
@@ -68,7 +69,7 @@ class _FilesListWidgetState extends State<FilesListWidget>
         widget.onDeletedFile?.call(target);
       });
 
-      if (context.mounted) {
+      if (context.mounted && showSnackDeleted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('File deleted'),
@@ -95,20 +96,35 @@ class _FilesListWidgetState extends State<FilesListWidget>
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
-              'Total files: ${widget.files.length} ',
-              style: Theme.of(context).textTheme.titleLarge,
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Text(
+                'Total files: ${widget.files.length} ',
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
             ),
             const SizedBox(width: 10),
             const Spacer(),
-            // ElevatedButton(
-            //   onPressed: () {
-            //     setState(() {
-            //       selectedFiles.value = filesFilteredWithNoReferences;
-            //     });
-            //   },
-            //   child: const Text('Select all'),
-            // ),
+            Visibility(
+              visible: widget.showDeleteButton,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Row(
+                  children: [
+                    const Text('Delete all'),
+                    IconButton(
+                      onPressed: () {
+                        for (final file in widget.files) {
+                          deleteFile(file, showSnackDeleted: false);
+                          widget.onDeletedFile?.call(file);
+                        }
+                      },
+                      icon: const Icon(Icons.delete, color: Colors.red),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ],
         ),
         Expanded(
