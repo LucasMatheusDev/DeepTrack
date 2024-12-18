@@ -33,9 +33,12 @@ class _DeleteSuggestFilesPageState extends State<DeleteSuggestFilesPage> {
       replacement: const Center(
         child: Text('No files to delete'),
       ),
-      child: FilesListWidget(
-        onDeletedFile: widget.onDeletedFile,
-        files: filesFilteredWithNoReferences,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+        child: FilesListWidget(
+          onDeletedFile: widget.onDeletedFile,
+          files: filesFilteredWithNoReferences,
+        ),
       ),
     );
   }
