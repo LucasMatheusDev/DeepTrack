@@ -65,8 +65,10 @@ The main objective of DeepTrack is to provide a clear and detailed understanding
 
 ### Using the CLI
   [Documentation](cli/deep_track_cli/README.md) for DeepTrack CLI.
-
-  [Install the CLI](cli/deep_track_cli/bin/deep_track_cli.exe). 
+  
+  <a href="https://github.com/LucasMatheusDev/DeepTrack/raw/refs/heads/main/cli/deep_track_cli/bin/deep_track_cli.exe"
+  download="deep_track_cli.exe">Download the CLI 
+  arquivo</a>
 
 ### Using the GUI
   [Documentation](gui/deep_track_gui/README.md) for DeepTrack GUI.
