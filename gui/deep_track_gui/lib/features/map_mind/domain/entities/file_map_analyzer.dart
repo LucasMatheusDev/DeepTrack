@@ -11,6 +11,11 @@ class FileMapMindAnalyzer extends FileAnalyzer {
     this.isExternalFile = false,
   });
 
+  @override
+  String toString() {
+    return 'FileMapMindAnalyzer(path: $path, nameFile: $nameFile, imports: $imports, references: $references, isExternalFile: $isExternalFile)';
+  }
+
   factory FileMapMindAnalyzer.external({
     required String path,
     required String nameFile,

@@ -26,24 +26,25 @@ class NodeMapFileWidget extends StatefulWidget {
 
 class _NodeMapFileWidgetState extends State<NodeMapFileWidget> {
   final globalKey = GlobalKey();
+  final filesMap = ValueNotifier<List<FileMapMindAnalyzer>?>(null);
 
-  List<FileMapMindAnalyzer> getChildren() {
-    List<FileMapMindAnalyzer> children = [];
+  void updateFilesMap() {
+    List<FileMapMindAnalyzer> files = [];
     log("Total imports: ${widget.fileTarget.imports.length}");
 
     for (var import in widget.fileTarget.imports) {
       final file = widget.allFiles.where((element) => element.path == import);
       if (file.isNotEmpty) {
-        children.add(file.first);
+        files.add(file.first);
       } else {
         final name = import.split("/").last;
         FileMapMindAnalyzer file =
             FileMapMindAnalyzer.external(nameFile: name, path: import);
 
-        children.add(file);
+        files.add(file);
       }
     }
-    return children;
+    filesMap.value = files;
   }
 
   final _isExpanded = ValueNotifier(false);
@@ -51,6 +52,7 @@ class _NodeMapFileWidgetState extends State<NodeMapFileWidget> {
   @override
   void initState() {
     _isExpanded.value = widget.isOpen;
+    updateFilesMap();
     super.initState();
   }
 
@@ -67,7 +69,6 @@ class _NodeMapFileWidgetState extends State<NodeMapFileWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final children = getChildren();
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: RepaintBoundary(
@@ -95,7 +96,8 @@ class _NodeMapFileWidgetState extends State<NodeMapFileWidget> {
                           (file) => byReferences().hasMatch(file.path));
                       Navigator.of(context).push(MaterialPageRoute(
                         builder: (context) => MapMindBasePage(
-                          title: "References by ${widget.fileTarget.nameFile.capitalize()}",
+                          title:
+                              "References by ${widget.fileTarget.nameFile.capitalize()}",
                           analyzerInfo: fileAnalyzer,
                         ),
                       ));
@@ -108,18 +110,28 @@ class _NodeMapFileWidgetState extends State<NodeMapFileWidget> {
             ValueListenableBuilder(
               valueListenable: _isExpanded,
               builder: (context, isExpanded, child) => isExpanded
-                  ? MindMap(
-                      dotColor: Colors.red,
-                      dotPath: pathNode(
-                        const Size(50, 50),
-                      ),
-                      children: children
-                          .map((file) => NodeMapFileWidget(
-                                fileTarget: file,
-                                allFiles: widget.allFiles,
-                              ))
-                          .toList(),
-                    )
+                  ? ValueListenableBuilder(
+                      valueListenable: filesMap,
+                      builder: (context, files, child) {
+                        if (files == null) {
+                          return const SizedBox(
+                            width: 50,
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+                        return MindMap(
+                          dotColor: Colors.red,
+                          dotPath: pathNode(
+                            const Size(50, 50),
+                          ),
+                          children: files
+                              .map((file) => NodeMapFileWidget(
+                                    fileTarget: file,
+                                    allFiles: widget.allFiles,
+                                  ))
+                              .toList(),
+                        );
+                      })
                   : const SizedBox(),
             ),
           ],

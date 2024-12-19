@@ -3,6 +3,7 @@ import 'package:deep_track_gui/features/map_mind/domain/entities/map_mind_entity
 import 'package:deep_track_gui/features/map_mind/presenter/view/widgets/button_take_screenshot_widget.dart';
 import 'package:deep_track_gui/features/map_mind/presenter/view/widgets/node_map_file_widget.dart';
 import 'package:deep_track_gui/features/map_mind/presenter/view/widgets/not_found_widget.dart';
+import 'package:deep_track_gui/features/map_mind/presenter/view/widgets/visible_only_if_on_screen_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:mind_map/mind_map.dart';
 
@@ -71,10 +72,16 @@ class _MapMindPageState extends State<MapMindPage> {
                           key: repaintBoundaryKey,
                           child: MindMap(
                             children: widget.filterFiles
-                                .map((file) => NodeMapFileWidget(
-                                      fileTarget: file,
-                                      allFiles:
-                                          widget.analyzerInfo.fileAnalyzer,
+                                .map((file) => VisibleOnlyIfOnScreenWidget(
+                                      key: ValueKey(file.path),
+                                      isVisible:
+                                          widget.filterFiles.indexOf(file) < 30,
+                                      placeholderSize: const Size(250, 250),
+                                      child: NodeMapFileWidget(
+                                        fileTarget: file,
+                                        allFiles:
+                                            widget.analyzerInfo.fileAnalyzer,
+                                      ),
                                     ))
                                 .toList(),
                           ),

@@ -162,42 +162,38 @@ class _MapMindBasePageState extends State<MapMindBasePage>
                 //       );
                 //     }),
                 const SizedBox(width: 10),
-                ValueListenableBuilder(
-                  valueListenable: indexPage,
-                  builder: (context, index, child) {
-                    return Expanded(
-                      child: ValueListenableBuilder(
-                        valueListenable: searchControllerEditing,
-                        builder: (context, _, child) {
-                          final filterFiles = filesFiltered(analyzerInfo);
-                          final layers = analyzerInfo.layerByFilter(
-                              filter: (layer) =>
-                                  searchRegex?.hasMatch(layer.toString()) ==
-                                  true);
-                          return PageView(
-                            physics: const NeverScrollableScrollPhysics(),
-                            controller: pageViewController,
-                            children: [
-                              MapMindPage(
-                                analyzerInfo: analyzerInfo,
-                                filterFiles: filterFiles,
-                              ),
-                              DeleteSuggestFilesPage(
-                                onDeletedFile: (file) {
-                                  controller.deleteFile(file);
-                                },
-                                filterFiles: filterFiles,
-                              ),
-                              if (analyzerInfo.layers.isNotEmpty)
-                                CleanArchVisualization(
-                                  layers: layers,
-                                ),
-                            ],
-                          );
-                        },
-                      ),
-                    );
-                  },
+                Expanded(
+                  child: ValueListenableBuilder(
+                    valueListenable: searchControllerEditing,
+                    builder: (context, _, child) {
+                      final filterFiles = filesFiltered(analyzerInfo);
+                      final layers = analyzerInfo.layerByFilter(
+                          filter: (layer) =>
+                              searchRegex?.hasMatch(layer.toString()) == true);
+                      return PageView(
+                        physics: const NeverScrollableScrollPhysics(),
+                        controller: pageViewController,
+                        children: [
+                          MapMindPage(
+                            key: ValueKey(
+                                widget.analyzerInfo.hashCode.toString()),
+                            analyzerInfo: analyzerInfo,
+                            filterFiles: filterFiles,
+                          ),
+                          DeleteSuggestFilesPage(
+                            onDeletedFile: (file) {
+                              controller.deleteFile(file);
+                            },
+                            filterFiles: filterFiles,
+                          ),
+                          if (analyzerInfo.layers.isNotEmpty)
+                            CleanArchVisualization(
+                              layers: layers,
+                            ),
+                        ],
+                      );
+                    },
+                  ),
                 ),
               ],
             );
