@@ -90,15 +90,15 @@ void main(List<String> args) async {
 
 Future<List<FileSystemEntity>> getDartFilesFromDirectory(Directory directory,
     {RegExp? pattern}) async {
-  final dartFiles = <FileSystemEntity>[];
+  final files = <FileSystemEntity>[];
   pattern ??= RegExp(r'\.dart$');
   await for (var entity in directory.list(recursive: true)) {
     if (entity is File && pattern.hasMatch(entity.path)) {
-      dartFiles.add(entity);
+      files.add(entity);
     }
   }
 
-  return dartFiles;
+  return files;
 }
 
 Future<List<FileAnalyzer>> analyzerFiles(
