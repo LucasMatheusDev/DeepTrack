@@ -19,16 +19,24 @@ class MapMindProjectController {
       state.value = SuccessState(data: FilesAnalyzerInfo(files));
     }
   }
-
+ static SearchFilesFilter? lastFilter;
   Future<void> getFilesAnalysis(
     SearchFilesFilter filter,
   ) async {
+    lastFilter = filter;
     state.changeToLoadingState();
     final result = await useCase.getFilesAnalysis(filter);
     result.deal(
       onSuccess: state.changeToSuccessState,
       onFail: state.changeToErrorState,
     );
+  }
+
+  Future<void> refreshFilesAnalysis() async {
+    final filter = lastFilter;
+    if (filter != null) {
+      await getFilesAnalysis(filter);
+    }
   }
 
   void deleteFile(FileAnalyzer file) {

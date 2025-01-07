@@ -111,6 +111,17 @@ class _MapMindBasePageState extends State<MapMindBasePage>
         title: Text(widget.title.capitalize()),
         toolbarHeight: 90,
         actions: [
+          IconButton(
+              icon: const Icon(Icons.refresh),
+              onPressed: () {
+                tabController.animateTo(0);
+                indexPage.value = 0;
+                pageViewController.jumpToPage(0);
+                controller.refreshFilesAnalysis();
+              }),
+          const SizedBox(
+            width: 20,
+          ),
           ValueListenableBuilder(
             valueListenable: controller.state,
             builder: (context, state, child) {
