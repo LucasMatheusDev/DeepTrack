@@ -16,7 +16,6 @@ class AnalyzerImport {
     Pattern? exportFilterPattern,
   })  : importRegex = importFilterPattern is RegExp
             ? importFilterPattern
-            // add part and part of
             : RegExp(importFilterPattern?.toString() ??
                 r"import\s+'([^']+)';|part\s+'([^']+)';|part of\s+'([^']+)';"),
         exportRegex = exportFilterPattern is RegExp
@@ -91,7 +90,7 @@ class AnalyzerImport {
     final allMatches = [...matches, ...exportsMatches];
 
     for (var match in allMatches) {
-      final import = match.group(1);
+      String? import = match.group(1) ?? (match.group(2) ?? match.group(3));
       if (import != null) {
         imports.add(import);
       }
