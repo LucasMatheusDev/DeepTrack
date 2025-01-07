@@ -23,11 +23,11 @@ class TextAlongCircle extends StatelessWidget {
       alignment: Alignment.center,
       transform: Matrix4.rotationZ(index * angleStep),
       child: CurvedText(
-        radius: radius + 5,
+        radius: radius,
         text: text.capitalize(),
         textStyle: TextStyle(
           color: color,
-          fontSize: 16,
+          fontSize: 14,
           fontWeight: FontWeight.bold,
         ),
       ),
