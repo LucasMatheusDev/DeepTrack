@@ -1,5 +1,3 @@
-Here is the English translation of the provided text:
-
 # DeepTrack
 
 DeepTrack is a software developed to analyze projects based on the interactions between files and layers, providing valuable insights into dependencies and organization. It helps developers and teams understand how the components of a project are interconnected, identifying cross-references and import flows.
